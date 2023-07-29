@@ -12,38 +12,39 @@ import 'package:todo_app_with_bloc/models/todo_model.dart';
 part 'filtered_todos_state.dart';
 
 class FilteredTodosCubit extends Cubit<FilteredTodosState> {
-  //todo 2
   late StreamSubscription todoListSubscription;
   late StreamSubscription todoSearchSubscription;
   late StreamSubscription todoFilterSubscription;
 
-  //todo 3
   final TodoListCubit todoListCubit;
   final TodoSearchCubit todoSearchCubit;
   final TodoFilterCubit todoFilterCubit;
 
-  FilteredTodosCubit(
-    this.todoListCubit,
-    this.todoSearchCubit,
-    this.todoFilterCubit,
-  ) : super(FilteredTodosState.initial()) {
-    //todo 4
+  final List<Todo> initialTodos;
+
+  FilteredTodosCubit({
+    required this.todoListCubit,
+    required this.todoSearchCubit,
+    required this.todoFilterCubit,
+    required this.initialTodos,
+  }) : super(
+          FilteredTodosState(
+            filteredTodos: initialTodos,
+          ),
+        ) {
     todoListSubscription = todoListCubit.stream.listen((_) {
       setFilteredTodos();
     });
 
-    //todo 5
     todoSearchSubscription = todoSearchCubit.stream.listen((_) {
       setFilteredTodos();
     });
 
-    //todo 6
     todoFilterSubscription = todoFilterCubit.stream.listen((_) {
       setFilteredTodos();
     });
   }
 
-  //todo 7
   void setFilteredTodos() {
     List<Todo> filteredTodos;
 
@@ -76,7 +77,6 @@ class FilteredTodosCubit extends Cubit<FilteredTodosState> {
     emit(state.copyWith(filteredTodos: filteredTodos));
   }
 
-  //todo 8 (next cubits.dart)
   @override
   Future<void> close() {
     todoListSubscription.cancel();

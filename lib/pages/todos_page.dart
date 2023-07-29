@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app_with_bloc/pages/create_todo.dart';
+import 'package:todo_app_with_bloc/pages/search_and_filter_todo.dart';
+import 'package:todo_app_with_bloc/pages/show_todos.dart';
 import 'package:todo_app_with_bloc/pages/todo_header.dart';
 
 class TodosPage extends StatelessWidget {
@@ -17,8 +19,11 @@ class TodosPage extends StatelessWidget {
             ),
             child: Column(
               children: [
-                TodoHeader(), //todo 1
-                CreateTodo(), // todo 2 (finish)
+                TodoHeader(),
+                CreateTodo(),
+                SizedBox(height: 20.0),
+                SearchAndFilterTodo(), //todo 1
+                ShowTodos(), // todo 2 (finish)
               ],
             ),
           ),
