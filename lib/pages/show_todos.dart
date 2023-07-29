@@ -11,48 +11,81 @@ class ShowTodos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final todos = context.watch<FilteredTodosCubit>().state.filteredTodos;
-    return ListView.separated(
-      primary: false,
-      shrinkWrap: true,
-      itemCount: todos.length,
-      separatorBuilder: (BuildContext context, int index) {
-        return const Divider(color: Colors.grey);
-      },
-      itemBuilder: (BuildContext context, int index) {
-        return Dismissible(
-          key: ValueKey(todos[index].id),
-          background: showBackground(0),
-          secondaryBackground: showBackground(1),
-          onDismissed: (_) {
-            context.read<TodoListCubit>().removeTodo(todos[index]);
-          },
-          confirmDismiss: (_) {
-            return showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text('Are you sure'),
-                  content: const Text('Do you really want to delete'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('NO'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('YES'),
-                    ),
-                  ],
+
+    //todo 5 (finish)
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<TodoListCubit, TodoListState>(
+          listener: (context, state) {
+            context.read<FilteredTodosCubit>().setFilteredTodos(
+                  filter: context.read<TodoFilterCubit>().state.filter,
+                  todos: state.todos,
+                  searchTerm: context.read<TodoSearchCubit>().state.searchTerm,
                 );
-              },
-            );
           },
-          child: TodoItem(
-            todo: todos[index],
-          ),
-        );
-      },
+        ),
+        BlocListener<TodoFilterCubit, TodoFilterState>(
+          listener: (context, state) {
+            context.read<FilteredTodosCubit>().setFilteredTodos(
+                  filter: state.filter,
+                  todos: context.read<TodoListCubit>().state.todos,
+                  searchTerm: context.read<TodoSearchCubit>().state.searchTerm,
+                );
+          },
+        ),
+        BlocListener<TodoSearchCubit, TodoSearchState>(
+          listener: (context, state) {
+            context.read<FilteredTodosCubit>().setFilteredTodos(
+                  filter: context.read<TodoFilterCubit>().state.filter,
+                  todos: context.read<TodoListCubit>().state.todos,
+                  searchTerm: state.searchTerm,
+                );
+          },
+        ),
+      ],
+      child: ListView.separated(
+        primary: false,
+        shrinkWrap: true,
+        itemCount: todos.length,
+        separatorBuilder: (BuildContext context, int index) {
+          return const Divider(color: Colors.grey);
+        },
+        itemBuilder: (BuildContext context, int index) {
+          return Dismissible(
+            key: ValueKey(todos[index].id),
+            background: showBackground(0),
+            secondaryBackground: showBackground(1),
+            onDismissed: (_) {
+              context.read<TodoListCubit>().removeTodo(todos[index]);
+            },
+            confirmDismiss: (_) {
+              return showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Are you sure'),
+                    content: const Text('Do you really want to delete'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('NO'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('YES'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: TodoItem(
+              todo: todos[index],
+            ),
+          );
+        },
+      ),
     );
   }
 
