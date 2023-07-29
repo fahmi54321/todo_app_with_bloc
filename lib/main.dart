@@ -13,7 +13,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      //todo 1 (finish)
       providers: [
         BlocProvider<TodoListCubit>(
           create: (context) => TodoListCubit(),
@@ -26,7 +25,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ActiveTodoCountCubit>(
           create: (context) => ActiveTodoCountCubit(
-            context.read<TodoListCubit>(),
+            initialActiveTodoCount:
+                context.read<TodoListCubit>().state.todos.length,
+            todoListCubit: context.read<TodoListCubit>(),
           ),
         ),
         BlocProvider<FilteredTodosCubit>(
